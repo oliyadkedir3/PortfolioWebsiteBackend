@@ -32,7 +32,7 @@ contactEmail.verify((error) => {
   }
 });
 
-router.post("/contact", (req, res) => {
+router.post("/", (req, res) => {
   console.log(req);
   const name = req.body.fullName;
   const email = req.body.email;
@@ -59,13 +59,9 @@ router.post("/contact", (req, res) => {
 });
 
 // Use the router in your main app
-app.use("/contact", router);
 app.use("/home", home);
+app.use("/contact", router);
 
-// // Handles any requests that don't match the above
-// app.get('*', (req,res) =>{
-//     res.sendFile(path.join(__dirname+'/build/index.html'));
-// });
 
 const port = 5000;
 app.listen(port);
