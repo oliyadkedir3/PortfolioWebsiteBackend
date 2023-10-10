@@ -5,16 +5,18 @@ const cors = require("cors");
 const nodemailer = require("nodemailer");
 const bodyParser = require('body-parser');
 const path = require('path');
+const multer = require('multer');
 
-// server used to send send emails
+const storage = multer.memoryStorage(); // You can configure this according to your needs
+const upload = multer({ storage: storage });
+
+
 const app = express();
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+// Replace bodyParser with express.json() for parsing JSON in the request body
 app.use(express.json());
-
-// // Serve the static files from the React app
-// app.use(express.static(path.join(__dirname, 'build')));
-
+app.use(express.urlencoded({ extended: true }));
 
 const contactEmail = nodemailer.createTransport({
   service: 'gmail',
@@ -32,26 +34,31 @@ contactEmail.verify((error) => {
   }
 });
 
-router.post("/", (req, res) => {
+// Use the 'upload' middleware to handle multipart/form-data requests
+router.post("/", upload.any(), (req, res) => {
   console.log("inside contact api");
-  console.log(req);
-  const name = req.body.fullName;
+  // Access the fields from the req.body
+  console.log(req.body);
+  const fullName = req.body.fullName;
+  const mobileNumber = req.body.mobileNumber;
   const email = req.body.email;
-  const message = req.body.message;
-  const phone = req.body.phone;
   const subject = req.body.subject;
+  const message = req.body.message;
+  console.log(subject);
+
   const mail = {
-    from: name,
+    from: fullName,
     to: "oliyadoba@gmail.com",
-    subject: `<p>Subject: ${subject}`,
-    html: `<p>Name: ${name}</p>
+    subject: `Subject: ${subject}`,
+    html: `<p>Name: ${fullName}</p>
            <p>Email: ${email}</p>
-           <p>Phone: ${phone}</p>
+           <p>Phone: ${mobileNumber}</p>
            <p>Message: ${message}</p>`,
   };
+
   contactEmail.sendMail(mail, (error) => {
     if (error) {
-      res.json("The error", error);
+      res.json({ error: "The error", details: error });
     } else {
       console.log("Message sent");
       res.json({ code: 200, status: "Message Sent" });
@@ -59,13 +66,10 @@ router.post("/", (req, res) => {
   });
 });
 
-// Use the router in your main app
 app.use("/contact", router);
 app.use("/home", home);
 
-
-
 const port = 5000;
-app.listen(port);
-
-console.log('App is listening on port ' + port);
+app.listen(port, () => {
+  console.log('App is listening on port ' + port);
+});
