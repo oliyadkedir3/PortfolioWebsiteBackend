@@ -32,7 +32,8 @@ contactEmail.verify((error) => {
   }
 });
 
-router.post("/contact", (req, res) => {
+router.post("/", (req, res) => {
+  console.log("inside contact api");
   console.log(req);
   const name = req.body.fullName;
   const email = req.body.email;
@@ -59,8 +60,9 @@ router.post("/contact", (req, res) => {
 });
 
 // Use the router in your main app
-app.use("/home", home);
 app.use("/contact", router);
+app.use("/home", home);
+
 
 
 const port = 5000;
