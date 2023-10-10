@@ -1,4 +1,5 @@
 const express = require("express");
+const home = require("./routes/home");
 const router = express.Router();
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -58,7 +59,8 @@ router.post("/contact", (req, res) => {
 });
 
 // Use the router in your main app
-app.use("/", router);
+app.use("/contact", router);
+app.use("/home", home);
 
 // // Handles any requests that don't match the above
 // app.get('*', (req,res) =>{
