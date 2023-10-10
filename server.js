@@ -67,7 +67,7 @@ app.use("/home", home);
 //     res.sendFile(path.join(__dirname+'/build/index.html'));
 // });
 
-const port = 80 || 5000;
+const port = 5000;
 app.listen(port);
 
 console.log('App is listening on port ' + port);
